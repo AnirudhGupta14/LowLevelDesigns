@@ -1,79 +1,64 @@
 package models;
 
 import enums.BookingStatus;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
-@Getter
-@Setter
 public class Booking {
-    private final String bookingId;
-    private final User user;
+    private final String id;
     private final Show show;
     private final List<Seat> seats;
-    private final LocalDateTime bookingTime;
+    private final User user;
     private BookingStatus status;
-    private Payment payment;
+    private final double totalAmount;
+    private final LocalDateTime bookingTime;
 
-    public Booking(User user, Show show, List<Seat> seats) {
-        this.bookingId = UUID.randomUUID().toString();
-        this.user = user;
+    public Booking(String id, Show show, List<Seat> seats, User user) {
+        this.id = id;
         this.show = show;
-        this.seats = List.copyOf(seats);
+        this.seats = seats;
+        this.user = user;
+        this.status = BookingStatus.PENDING;
+        this.totalAmount = seats.stream().mapToDouble(Seat::getPrice).sum();
         this.bookingTime = LocalDateTime.now();
-        this.status = BookingStatus.CREATED;
     }
 
-    public void confirm() {
-        if (status != BookingStatus.CREATED) {
-            throw new IllegalStateException("Cannot confirm booking in current state: " + status);
-        }
-        this.status = BookingStatus.CONFIRMED;
+    public String getId() {
+        return id;
     }
 
-    public void expire() {
-        if (status == BookingStatus.CREATED) {
-            this.status = BookingStatus.EXPIRED;
-        }
+    public Show getShow() {
+        return show;
     }
 
-    public void cancel() {
-        if (status == BookingStatus.CREATED || status == BookingStatus.CONFIRMED) {
-            this.status = BookingStatus.CANCELLED;
-        }
+    public List<Seat> getSeats() {
+        return seats;
     }
 
-    public double calculateTotalAmount() {
-        return seats.stream()
-                .mapToDouble(this::getSeatPrice)
-                .sum();
+    public User getUser() {
+        return user;
     }
 
-    private double getSeatPrice(Seat seat) {
-        return switch (seat.getCategory()) {
-            case SILVER -> 200.0;
-            case GOLD -> 300.0;
-            case PLATINUM -> 500.0;
-        };
+    public BookingStatus getStatus() {
+        return status;
     }
 
-    public List<Seat> getSeats() { return List.copyOf(seats); }
+    public double getTotalAmount() {
+        return totalAmount;
+    }
 
+    public LocalDateTime getBookingTime() {
+        return bookingTime;
+    }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Booking booking = (Booking) obj;
-        return bookingId.equals(booking.bookingId);
+    public void setStatus(BookingStatus status) {
+        this.status = status;
     }
 
     @Override
-    public int hashCode() {
-        return bookingId.hashCode();
+    public String toString() {
+        return "Booking[" + id + "] " + user.getName() + " | " + show.getMovie().getTitle()
+                + " | " + seats.size() + " seats | $" + totalAmount + " | " + status;
     }
 }

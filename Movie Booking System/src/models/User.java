@@ -1,35 +1,47 @@
 package models;
 
-import lombok.Getter;
-import lombok.Setter;
+import java.util.Objects;
 
-import java.util.UUID;
-
-@Getter
-@Setter
 public class User {
-    private final String userId;
+    private final String id;
     private final String name;
     private final String email;
-    private final String phoneNumber;
 
-    public User(String name, String email, String phoneNumber) {
-        this.userId = UUID.randomUUID().toString();
+    public User(String id, String name, String email) {
+        this.id = id;
         this.name = name;
         this.email = email;
-        this.phoneNumber = phoneNumber;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        User user = (User) obj;
-        return userId.equals(user.userId);
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof User))
+            return false;
+        User user = (User) o;
+        return id.equals(user.id);
     }
 
     @Override
     public int hashCode() {
-        return userId.hashCode();
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return name + " (" + email + ")";
     }
 }

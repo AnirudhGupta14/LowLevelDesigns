@@ -1,38 +1,66 @@
 package models;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 
-@Getter
-@Setter
 public class Show {
-    private final String showId;
+    private final String id;
     private final Movie movie;
     private final Screen screen;
     private final LocalDateTime startTime;
-    private final LocalDateTime endTime;
+    private final Map<Seat, Boolean> seatAvailability; // true = available
 
-    public Show(Movie movie, Screen screen, LocalDateTime startTime) {
-        this.showId = UUID.randomUUID().toString();
+    public Show(String id, Movie movie, Screen screen, LocalDateTime startTime) {
+        this.id = id;
         this.movie = movie;
         this.screen = screen;
         this.startTime = startTime;
-        this.endTime = startTime.plus(movie.getDuration());
+        this.seatAvailability = new LinkedHashMap<>();
+        for (Seat seat : screen.getSeats()) {
+            seatAvailability.put(seat, true);
+        }
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public Movie getMovie() {
+        return movie;
+    }
+
+    public Screen getScreen() {
+        return screen;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public List<Seat> getAvailableSeats() {
+        List<Seat> available = new ArrayList<>();
+        for (Map.Entry<Seat, Boolean> entry : seatAvailability.entrySet()) {
+            if (entry.getValue()) {
+                available.add(entry.getKey());
+            }
+        }
+        return available;
+    }
+
+    public boolean isSeatAvailable(Seat seat) {
+        return seatAvailability.getOrDefault(seat, false);
+    }
+
+    public synchronized void markSeatBooked(Seat seat) {
+        seatAvailability.put(seat, false);
+    }
+
+    public synchronized void markSeatAvailable(Seat seat) {
+        seatAvailability.put(seat, true);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Show show = (Show) obj;
-        return showId.equals(show.showId);
-    }
-
-    @Override
-    public int hashCode() {
-        return showId.hashCode();
+    public String toString() {
+        return movie.getTitle() + " @ " + screen.getName() + " [" + startTime + "]";
     }
 }

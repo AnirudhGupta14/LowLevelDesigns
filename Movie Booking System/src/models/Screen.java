@@ -1,24 +1,16 @@
 package models;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-@Getter
-@Setter
 public class Screen {
-    private final String screenId;
+    private final String id;
     private final String name;
-    private final Theatre theatre;
     private final List<Seat> seats;
 
-    public Screen(String name, Theatre theatre) {
-        this.screenId = UUID.randomUUID().toString();
+    public Screen(String id, String name) {
+        this.id = id;
         this.name = name;
-        this.theatre = theatre;
         this.seats = new ArrayList<>();
     }
 
@@ -26,16 +18,20 @@ public class Screen {
         seats.add(seat);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Screen screen = (Screen) obj;
-        return screenId.equals(screen.screenId);
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Seat> getSeats() {
+        return new ArrayList<>(seats);
     }
 
     @Override
-    public int hashCode() {
-        return screenId.hashCode();
+    public String toString() {
+        return name + " (" + seats.size() + " seats)";
     }
 }

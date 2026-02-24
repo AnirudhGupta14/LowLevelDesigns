@@ -1,24 +1,18 @@
 package models;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-@Getter
-@Setter
 public class Theatre {
-    private final String theatreId;
+    private final String id;
     private final String name;
-    private final String address;
+    private final String city;
     private final List<Screen> screens;
 
-    public Theatre(String name, String address) {
-        this.theatreId = UUID.randomUUID().toString();
+    public Theatre(String id, String name, String city) {
+        this.id = id;
         this.name = name;
-        this.address = address;
+        this.city = city;
         this.screens = new ArrayList<>();
     }
 
@@ -26,16 +20,24 @@ public class Theatre {
         screens.add(screen);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Theatre theatre = (Theatre) obj;
-        return theatreId.equals(theatre.theatreId);
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public List<Screen> getScreens() {
+        return new ArrayList<>(screens);
     }
 
     @Override
-    public int hashCode() {
-        return theatreId.hashCode();
+    public String toString() {
+        return name + ", " + city + " (" + screens.size() + " screens)";
     }
 }

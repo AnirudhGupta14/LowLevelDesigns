@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ATM Machine/ATM Machine.iml" filepath="$PROJECT_DIR$/ATM Machine/ATM Machine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Cache System/Cache System.iml" filepath="$PROJECT_DIR$/Cache System/Cache System.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Car Renting System/Car Renting System.iml" filepath="$PROJECT_DIR$/Car Renting System/Car Renting System.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Chess Game/Chess Game.iml" filepath="$PROJECT_DIR$/Chess Game/Chess Game.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Cricket Score Update System/Cricket Score Update System.iml" filepath="$PROJECT_DIR$/Cricket Score Update System/Cricket Score Update System.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Elevator System/Elevator System.iml" filepath="$PROJECT_DIR$/Elevator System/Elevator System.iml" />
+      <module fileurl="file://$PROJECT_DIR$/File System/File System.iml" filepath="$PROJECT_DIR$/File System/File System.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Food Ordering System/Food Ordering System.iml" filepath="$PROJECT_DIR$/Food Ordering System/Food Ordering System.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Inventory Management System/Inventory Management System.iml" filepath="$PROJECT_DIR$/Inventory Management System/Inventory Management System.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Logging System/Logging System.iml" filepath="$PROJECT_DIR$/Logging System/Logging System.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/LowLevelDesigns.iml" filepath="$PROJECT_DIR$/.idea/LowLevelDesigns.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Movie Booking System/Movie Booking System.iml" filepath="$PROJECT_DIR$/Movie Booking System/Movie Booking System.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Parking System/Parking System.iml" filepath="$PROJECT_DIR$/Parking System/Parking System.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Snake Game/Snake Game.iml" filepath="$PROJECT_DIR$/Snake Game/Snake Game.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Splitwise System/Splitwise System.iml" filepath="$PROJECT_DIR$/Splitwise System/Splitwise System.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Tic Tac Toe/Tic Tac Toe.iml" filepath="$PROJECT_DIR$/Tic Tac Toe/Tic Tac Toe.iml" />
+    </modules>
+  </component>
+</project>

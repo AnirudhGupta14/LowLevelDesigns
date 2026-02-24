@@ -1,48 +1,43 @@
 package models;
 
 import enums.SeatCategory;
-import enums.SeatStatus;
-import lombok.Getter;
-import lombok.Setter;
 
-import java.util.UUID;
-
-@Getter
-@Setter
-public class Seat {
-    private final String seatId;
+public abstract class Seat {
+    private final String id;
     private final int row;
-    private final int column;
+    private final int col;
     private final SeatCategory category;
-    private final Screen screen;
-    private SeatStatus status;
+    private final double price;
 
-    public Seat(int row, int column, SeatCategory category, Screen screen) {
-        this.seatId = UUID.randomUUID().toString();
+    public Seat(String id, int row, int col, SeatCategory category, double price) {
+        this.id = id;
         this.row = row;
-        this.column = column;
+        this.col = col;
         this.category = category;
-        this.screen = screen;
-        this.status = SeatStatus.AVAILABLE;
+        this.price = price;
     }
 
+    public String getId() { return id; }
+    public int getRow() { return row; }
+    public int getCol() { return col; }
+    public SeatCategory getCategory() { return category; }
+    public double getPrice() { return price; }
+
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Seat seat = (Seat) obj;
-        return seatId.equals(seat.seatId);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Seat)) return false;
+        Seat seat = (Seat) o;
+        return id.equals(seat.id);
     }
 
     @Override
     public int hashCode() {
-        return seatId.hashCode();
+        return id.hashCode();
     }
 
     @Override
     public String toString() {
-        return String.format("Seat[%d,%d]", row, column);
+        return category + "-R" + row + "C" + col + " ($" + price + ")";
     }
 }
-
-
