@@ -3,27 +3,31 @@ package Services;
 import Appenders.LogAppender;
 import Constants.LogLevel;
 
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Configuration for the Logger.
+ * Holds the minimum log level and the list of appenders.
+ * Allows dynamic reconfiguration at runtime.
+ */
 public class LoggerConfig {
-    private LogLevel logLevel;
-    private LogAppender logAppender;
-    public LoggerConfig(LogLevel logLevel, LogAppender logAppender) {
-        this.logLevel = logLevel;
-        this.logAppender = logAppender;
+
+    private final List<LogAppender> appenders;
+
+    public LoggerConfig() {
+        this.appenders = new ArrayList<>();
     }
 
-    public LogLevel getLogLevel() {
-        return logLevel;
+    public void addAppender(LogAppender appender) {
+        appenders.add(appender);
     }
 
-    public void setLogLevel(LogLevel logLevel) {
-        this.logLevel = logLevel;
+    public void removeAppender(LogAppender appender) {
+        appenders.remove(appender);
     }
 
-    public LogAppender getLogAppender() {
-        return logAppender;
-    }
-
-    public void setLogAppender(LogAppender logAppender) {
-        this.logAppender = logAppender;
+    public List<LogAppender> getAppenders() {
+        return new ArrayList<>(appenders);
     }
 }

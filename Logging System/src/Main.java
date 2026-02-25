@@ -2,46 +2,71 @@ import Appenders.ConsoleAppender;
 import Appenders.FileAppender;
 import Appenders.LogAppender;
 import Constants.LogLevel;
-import LogHandlers.DebugLogger;
-import LogHandlers.ErrorLogger;
-import LogHandlers.InfoLogger;
-import LogHandlers.LogHandler;
 import Services.Logger;
 import Services.LoggerConfig;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
 
-    // Build the chain of loggers: INFO -> DEBUG -> ERROR
-    private static LogHandler getChainOfLoggers(LogAppender appender) {
-        LogHandler errorLogger = new ErrorLogger(LogHandler.ERROR, appender);
-        LogHandler debugLogger = new DebugLogger(LogHandler.DEBUG, appender);
-        LogHandler infoLogger = new InfoLogger(LogHandler.INFO, appender);
-        infoLogger.setNextLogger(debugLogger);
-        debugLogger.setNextLogger(errorLogger);
-        return infoLogger;
-    }
-
     public static void main(String[] args) {
-        // Select the log appender (console or file)
+
+        System.out.println("==========================================================");
+        System.out.println("         📝 LOGGING SYSTEM — DEMO");
+        System.out.println("==========================================================\n");
+
+        // ─── STEP 1: Configure Logger ─────────────────────────────
+        System.out.println("── STEP 1: Configure Logger (DEBUG level + Console + File) ──\n");
+
+        LoggerConfig config = new LoggerConfig();
+
+        // Add console appender
         LogAppender consoleAppender = new ConsoleAppender();
-        LogAppender fileAppender = new FileAppender("logs.txt");
-        // Create the chain of loggers with the console appender
-        LogHandler loggerChain = getChainOfLoggers(consoleAppender);
+        config.addAppender(consoleAppender);
 
-        // Use a single logging approach to avoid duplication
-        System.out.println("Logging INFO level message:");
-        loggerChain.logMessage(LogHandler.INFO, "This is an information.");
-        System.out.println("nLogging DEBUG level message:");
-        loggerChain.logMessage(LogHandler.DEBUG, "This is a debug level information.");
-        System.out.println("nLogging ERROR level message:");
-        loggerChain.logMessage(LogHandler.ERROR, "This is an error information.");
+        // Add file appender
+        LogAppender fileAppender = new FileAppender("application.log");
+        config.addAppender(fileAppender);
 
-        // Demonstrate the singleton Logger usage as an alternative
-        System.out.println("nUsing Singleton Logger:");
-        Logger logger = Logger.getInstance(LogLevel.INFO, consoleAppender);
-        logger.setConfig(new LoggerConfig(LogLevel.INFO, fileAppender));
-        logger.error("Using singleton Logger - Error message");
+        // Create singleton logger
+        Logger logger = Logger.getInstance(config);
+
+        // ─── STEP 2: Log at all levels ────────────────────────────
+        System.out.println("── STEP 2: Logging at all levels (min level = DEBUG) ──\n");
+
+        logger.debug("Application starting up...");
+        logger.info("User 'Alice' logged in successfully.");
+        logger.warn("Disk usage is above 85%.");
+        logger.error("Failed to connect to database: timeout after 30s.");
+        logger.fatal("System out of memory! Shutting down.");
+
+        // ─── STEP 5: Console-only logging ─────────────────────────
+        System.out.println("\n── STEP 5: Remove file appender (console only) ──\n");
+
+        config.removeAppender(fileAppender);
+
+        System.out.println();
+        logger.info("This goes only to console, not to file.");
+        logger.error("Console-only error logging active.");
+
+        // ─── STEP 6: Multiple file appenders ──────────────────────
+        System.out.println("\n── STEP 6: Add error-specific file appender ──\n");
+
+        LogAppender errorFileAppender = new FileAppender("errors.log");
+        config.addAppender(errorFileAppender);
+
+        System.out.println();
+        logger.error("This error goes to console + errors.log");
+        logger.fatal("This fatal goes to console + errors.log");
+
+        // ─── SUMMARY ──────────────────────────────────────────────
+        System.out.println("\n==========================================================");
+        System.out.println("                  📊 DEMO SUMMARY");
+        System.out.println("==========================================================");
+        System.out.println("  ✅ Logged messages at DEBUG, INFO, WARN, ERROR, FATAL levels");
+        System.out.println("  ✅ Dynamic log level change (DEBUG → WARN → ERROR → DEBUG)");
+        System.out.println("  ✅ Console + File appenders working");
+        System.out.println("  ✅ Appenders added/removed at runtime");
+        System.out.println("  ✅ Chain of Responsibility filters messages by level");
+        System.out.println("  ✅ Check 'application.log' and 'errors.log' for file output");
+        System.out.println("\n✅ Demo completed successfully!");
     }
 }

@@ -1,14 +1,12 @@
 package LogHandlers;
 
-import Appenders.LogAppender;
+import Constants.LogLevel;
 
+/**
+ * Handles INFO level logs and above.
+ */
 public class InfoLogger extends LogHandler {
-    public InfoLogger(int level, LogAppender appender) {
-        super(level, appender);
-    }
-
-    @Override
-    protected void write(String message) {
-        System.out.println("INFO: " + message);
+    public InfoLogger() {
+        super(LogLevel.INFO);
     }
 }

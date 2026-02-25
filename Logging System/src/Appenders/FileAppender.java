@@ -1,25 +1,40 @@
 package Appenders;
 
-import Services.LogMessage;
+import Constants.LogLevel;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
+/**
+ * Appender that writes log messages to a file.
+ * Creates the file if it doesn't exist, appends if it does.
+ */
 public class FileAppender implements LogAppender {
-    private final String filePath; // Path to the log file
 
-    // Constructor to set the file path
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    private final String filePath;
+
     public FileAppender(String filePath) {
         this.filePath = filePath;
     }
 
-    // Appends a log message to the file
     @Override
-    public void append(LogMessage logMessage) {
-        try (FileWriter writer = new FileWriter(filePath, true)) {
-            writer.write(logMessage.toString() + "n"); // Write log to file
+    public void append(LogLevel level, String message) {
+        String timestamp = LocalDateTime.now().format(FORMATTER);
+        String formatted = "[" + timestamp + "] [" + level + "] " + message;
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filePath, true))) {
+            writer.println(formatted);
         } catch (IOException e) {
-            e.printStackTrace(); // Print error if file writing fails
+            System.err.println("Failed to write to log file: " + filePath + " — " + e.getMessage());
         }
+    }
+
+    public String getFilePath() {
+        return filePath;
     }
 }

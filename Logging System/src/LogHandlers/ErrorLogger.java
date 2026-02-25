@@ -1,14 +1,13 @@
 package LogHandlers;
 
-import Appenders.LogAppender;
+import Constants.LogLevel;
 
+/**
+ * Handles ERROR level logs and above.
+ * Typically the last handler in the chain (highest severity).
+ */
 public class ErrorLogger extends LogHandler {
-    public ErrorLogger(int level, LogAppender appender) {
-        super(level, appender);
-    }
-
-    @Override
-    protected void write(String message) {
-        System.out.println("ERROR: " + message);
+    public ErrorLogger() {
+        super(LogLevel.ERROR);
     }
 }

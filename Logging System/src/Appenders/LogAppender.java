@@ -1,7 +1,11 @@
 package Appenders;
 
-import Services.LogMessage;
+import Constants.LogLevel;
 
+/**
+ * Strategy Pattern interface — defines WHERE log messages are written.
+ * Implementations decide the output destination (console, file, etc.).
+ */
 public interface LogAppender {
-    void append(LogMessage logMessage);
+    void append(LogLevel level, String message);
 }

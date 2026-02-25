@@ -1,14 +1,13 @@
 package LogHandlers;
 
-import Appenders.LogAppender;
+import Constants.LogLevel;
 
+/**
+ * Handles DEBUG level logs.
+ * In a chain, this is typically the first handler (lowest severity).
+ */
 public class DebugLogger extends LogHandler {
-    public DebugLogger(int level, LogAppender appender) {
-        super(level, appender);
-    }
-
-    @Override
-    protected void write(String message) {
-        System.out.println("DEBUG: " + message);
+    public DebugLogger() {
+        super(LogLevel.DEBUG);
     }
 }

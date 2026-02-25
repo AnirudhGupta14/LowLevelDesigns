@@ -1,12 +1,27 @@
 package Appenders;
 
-import Services.LogMessage;
+import Constants.LogLevel;
 
-// Prints log messages to the console
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+/**
+ * Appender that writes log messages to the console (stdout/stderr).
+ * ERROR and FATAL go to stderr, everything else to stdout.
+ */
 public class ConsoleAppender implements LogAppender {
-    // Appends a log message to the console
+
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     @Override
-    public void append(LogMessage logMessage) {
-        System.out.println(logMessage); // Print log to console
+    public void append(LogLevel level, String message) {
+        String timestamp = LocalDateTime.now().format(FORMATTER);
+        String formatted = "[" + timestamp + "] [" + level + "] " + message;
+
+        if (level == LogLevel.ERROR || level == LogLevel.FATAL) {
+            System.err.println(formatted);
+        } else {
+            System.out.println(formatted);
+        }
     }
 }

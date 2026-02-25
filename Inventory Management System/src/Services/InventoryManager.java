@@ -1,26 +1,27 @@
 package Services;
 
-import Product.Product;
-import Product.ProductFactory;
+import Observer.InventoryObserver;
+import Observer.InventorySubject;
+import entities.Category;
+import entities.Product;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class InventoryManager {
+public class InventoryManager implements InventorySubject {
+
     private static InventoryManager instance;
 
-    // System components
-    private final List<Warehouse> warehouses;
-    private final ProductFactory productFactory;
+    private final Map<String, Product> products;
+    private final List<InventoryObserver> observers;
 
-    // Private constructor to prevent instantiation from outside
     private InventoryManager() {
-        // Initialize collections and dependencies
-        warehouses = new ArrayList<>();
-        productFactory = new ProductFactory();
+        this.products = new HashMap<>();
+        this.observers = new ArrayList<>();
     }
 
-    // Static method to get the singleton instance with thread safety
     public static synchronized InventoryManager getInstance() {
         if (instance == null) {
             instance = new InventoryManager();
@@ -28,34 +29,100 @@ public class InventoryManager {
         return instance;
     }
 
-    // Warehouse management
-    public void addWarehouse(Warehouse warehouse) {
-        warehouses.add(warehouse);
+    // ─── Observer management ───────────────────────────────────────
+
+    @Override
+    public void addObserver(InventoryObserver observer) {
+        observers.add(observer);
     }
 
-    public void removeWarehouse(Warehouse warehouse) {
-        warehouses.remove(warehouse);
+    @Override
+    public void removeObserver(InventoryObserver observer) {
+        observers.remove(observer);
     }
 
-    // Product inventory operations
-    public Product getProductBySku(String sku) {
-        for (Warehouse warehouse : warehouses) {
-            Product product = warehouse.getProductBySku(sku);
-            if (product != null) {
-                return product;
+    @Override
+    public void notifyObservers(Product product) {
+        for (InventoryObserver observer : observers) {
+            observer.onStockUpdate(product);
+        }
+    }
+
+    // ─── Product CRUD ──────────────────────────────────────────────
+
+    public void addProduct(Product product) {
+        if (products.containsKey(product.getId())) {
+            System.out.println("❌ Product with id \"" + product.getId() + "\" already exists.");
+            return;
+        }
+        products.put(product.getId(), product);
+        System.out.println("✅ Added: " + product);
+    }
+
+    public void removeProduct(String productId) {
+        Product removed = products.remove(productId);
+        if (removed == null) {
+            System.out.println("❌ Product \"" + productId + "\" not found.");
+        } else {
+            System.out.println("🗑️  Removed: " + removed.getName());
+        }
+    }
+
+    public Product getProduct(String productId) {
+        return products.get(productId);
+    }
+
+    public List<Product> getAllProducts() {
+        return new ArrayList<>(products.values());
+    }
+
+    public List<Product> getProductsByCategory(Category category) {
+        List<Product> result = new ArrayList<>();
+        for (Product p : products.values()) {
+            if (p.getCategory() == category) {
+                result.add(p);
             }
         }
-        return null;
+        return result;
     }
 
-    // Check stock levels and apply replenishment strategy if needed
-    public void checkAndReplenish(String sku) {
-        Product product = getProductBySku(sku);
-        if (product != null) {
-            // If product is below threshold, notify observers
-            if (product.getQuantity() < product.getThreshold()) {
+    // ─── Stock operations ──────────────────────────────────────────
 
-            }
+    public synchronized void updateStock(String productId, int quantityChange) {
+        Product product = products.get(productId);
+        if (product == null) {
+            System.out.println("❌ Product \"" + productId + "\" not found.");
+            return;
         }
+
+        int newQty = product.getQuantity() + quantityChange;
+        if (newQty < 0) {
+            System.out.println("❌ Insufficient stock for \"" + product.getName()
+                    + "\". Available: " + product.getQuantity() + ", requested: " + Math.abs(quantityChange));
+            return;
+        }
+
+        product.setQuantity(newQty);
+        notifyObservers(product);
+    }
+
+    public boolean hasStock(String productId, int requiredQty) {
+        Product product = products.get(productId);
+        return product != null && product.getQuantity() >= requiredQty;
+    }
+
+    // ─── Display ───────────────────────────────────────────────────
+
+    public void displayInventory() {
+        System.out.println("\n╔══════════════════════════════════════════════════════════════╗");
+        System.out.println("║                    📦 INVENTORY STATUS                      ║");
+        System.out.println("╠══════════════════════════════════════════════════════════════╣");
+        System.out.printf("║ %-6s ║ %-15s ║ %-12s ║ %8s ║ %5s ║%n", "ID", "Name", "Category", "Price", "Qty");
+        System.out.println("╠══════════════════════════════════════════════════════════════╣");
+        for (Product p : products.values()) {
+            System.out.printf("║ %-6s ║ %-15s ║ %-12s ║ %8.2f ║ %5d ║%n",
+                    p.getId(), p.getName(), p.getCategory(), p.getPrice(), p.getQuantity());
+        }
+        System.out.println("╚══════════════════════════════════════════════════════════════╝\n");
     }
 }
