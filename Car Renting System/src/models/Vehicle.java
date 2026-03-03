@@ -1,70 +1,64 @@
 package models;
 
-import java.util.ArrayList;
-import java.util.List;
+import constants.VehicleStatus;
+import constants.VehicleType;
 
+/**
+ * Represents a vehicle in the rental fleet.
+ * Holds pricing per hour (used by PricingStrategy).
+ */
 public class Vehicle {
-    private String registrationNumber;
-    private String color;
-    private Integer price;
-    private Integer manufacturingYear;
-    private String carCompany;
-    private List<BookingPeriod> bookings;
+    private final String vehicleId;
+    private final String brand;
+    private final String model;
+    private final VehicleType type;
+    private final double pricePerHour;
+    private VehicleStatus status;
 
-    public Vehicle(String registrationNumber, String color, Integer price, Integer manufacturingYear, String carCompany) {
-        this.registrationNumber = registrationNumber;
-        this.color = color;
-        this.price = price;
-        this.manufacturingYear = manufacturingYear;
-        this.carCompany = carCompany;
-        this.bookings = new ArrayList<>();
+    public Vehicle(String vehicleId, String brand, String model,
+            VehicleType type, double pricePerHour) {
+        this.vehicleId = vehicleId;
+        this.brand = brand;
+        this.model = model;
+        this.type = type;
+        this.pricePerHour = pricePerHour;
+        this.status = VehicleStatus.AVAILABLE;
     }
 
-    public String getRegistrationNumber() {
-        return registrationNumber;
+    public String getVehicleId() {
+        return vehicleId;
     }
 
-    public void setRegistrationNumber(String registrationNumber) {
-        this.registrationNumber = registrationNumber;
+    public String getBrand() {
+        return brand;
     }
 
-    public String getColor() {
-        return color;
+    public String getModel() {
+        return model;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public VehicleType getType() {
+        return type;
     }
 
-    public Integer getPrice() {
-        return price;
+    public double getPricePerHour() {
+        return pricePerHour;
     }
 
-    public void setPrice(Integer price) {
-        this.price = price;
+    public VehicleStatus getStatus() {
+        return status;
     }
 
-    public Integer getManufacturingYear() {
-        return manufacturingYear;
+    public void setStatus(VehicleStatus status) {
+        this.status = status;
     }
 
-    public void setManufacturingYear(Integer manufacturingYear) {
-        this.manufacturingYear = manufacturingYear;
+    public boolean isAvailable() {
+        return status == VehicleStatus.AVAILABLE;
     }
 
-    public String getCarCompany() {
-        return carCompany;
-    }
-
-    public void setCarCompany(String carCompany) {
-        this.carCompany = carCompany;
-    }
-
-    public List<BookingPeriod> getBookings() {
-        return bookings;
-    }
-
-    public void setBookings(List<BookingPeriod> bookings) {
-        this.bookings = bookings;
+    @Override
+    public String toString() {
+        return brand + " " + model + " [" + type + "] - ₹" + pricePerHour + "/hr | " + status;
     }
 }

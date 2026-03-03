@@ -1,17 +1,11 @@
 package Pieces;
 
-import Movement.MovementStrategy;
-import Services.Board;
-import Services.Cell;
+import Entities.Color;
+import Entities.PieceType;
+import Strategy.QueenMoveStrategy;
 
-// Queen Class with movement strategy
 public class Queen extends Piece {
-    private MovementStrategy strategy;
-    public Queen(boolean white) {
-        super(white, new QueenMovementStrategy());
-    }
-    @Override
-    public boolean canMove(Board board, Cell startCell, Cell endCell) {
-        return strategy.canMove(board, startCell, endCell);
+    public Queen(Color color) {
+        super(color, PieceType.QUEEN, new QueenMoveStrategy());
     }
 }

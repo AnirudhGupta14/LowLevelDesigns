@@ -1,32 +1,51 @@
 package Pieces;
 
-import Movement.MovementStrategy;
-import Services.Board;
-import Services.Cell;
+import Entities.Board;
+import Entities.Color;
+import Entities.Position;
+import Entities.PieceType;
+import Strategy.MoveStrategy;
 
+import java.util.List;
+
+/**
+ * Abstract base class for all chess pieces.
+ * Holds: Color, PieceType, and a pluggable MoveStrategy (Strategy Pattern).
+ */
 public abstract class Piece {
-    private boolean isWhitePiece;  // is the piece white piece or black piece
-    private boolean killed = false; // is the piece killed or not
-    private MovementStrategy movementStrategy;
+    protected final Color color;
+    protected final PieceType type;
+    protected MoveStrategy moveStrategy;
 
-    public Piece(boolean isWhitePiece, MovementStrategy movementStrategy) {
-        this.isWhitePiece = isWhitePiece;
-        this.movementStrategy = movementStrategy;
+    protected Piece(Color color, PieceType type, MoveStrategy moveStrategy) {
+        this.color = color;
+        this.type = type;
+        this.moveStrategy = moveStrategy;
     }
 
-    public boolean isWhite() {
-        return isWhitePiece;
+    public Color getColor() {
+        return color;
     }
 
-    public boolean isKilled() {
-        return killed;
+    public PieceType getType() {
+        return type;
     }
 
-    public void setKilled(boolean killed) {
-        this.killed = killed;
+    /**
+     * Returns all squares this piece can move to from {@code from}.
+     * Delegates all logic to the MoveStrategy.
+     */
+    public List<Position> getValidMoves(Position from, Board board) {
+        return moveStrategy.getValidMoves(from, board, color);
     }
 
-    public boolean canMove(Board board, Cell startBlock, Cell endBlock) {
-        return movementStrategy.canMove(board, startBlock, endBlock);
+    /** Allows swapping the movement strategy at runtime. */
+    public void setMoveStrategy(MoveStrategy strategy) {
+        this.moveStrategy = strategy;
+    }
+
+    @Override
+    public String toString() {
+        return color + "_" + type;
     }
 }
