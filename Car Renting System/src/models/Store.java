@@ -1,61 +1,61 @@
 package models;
 
-import constants.VehicleTypes;
+import constants.VehicleStatus;
+import constants.VehicleType;
 
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a rental store with its fleet of vehicles.
+ * Provides search capability to find available vehicles by type.
+ */
 public class Store {
-    private String storeId;
-    private VehicleStock vehicleStock;
+    private final String storeId;
+    private final String location;
+    private final List<Vehicle> vehicles;
 
-    public Store(String storeId) {
+    public Store(String storeId, String location) {
         this.storeId = storeId;
-        this.vehicleStock = new VehicleStock(); // each store gets its own stock
+        this.location = location;
+        this.vehicles = new ArrayList<>();
+    }
+
+    public void addVehicle(Vehicle vehicle) {
+        vehicles.add(vehicle);
+        System.out.println("  [Store] Vehicle added to " + location + ": " + vehicle);
+    }
+
+    public void removeVehicle(String vehicleId) {
+        vehicles.removeIf(v -> v.getVehicleId().equals(vehicleId));
+    }
+
+    /**
+     * Returns all available vehicles of the requested type.
+     * Pass null to get all available vehicles regardless of type.
+     */
+    public List<Vehicle> searchAvailableVehicles(VehicleType type) {
+        return vehicles.stream()
+                .filter(Vehicle::isAvailable)
+                .filter(v -> type == null || v.getType() == type)
+                .collect(Collectors.toList());
+    }
+
+    public List<Vehicle> getAllVehicles() {
+        return vehicles;
     }
 
     public String getStoreId() {
         return storeId;
     }
 
-    public VehicleStock getVehicleStock() {
-        return vehicleStock;
+    public String getLocation() {
+        return location;
     }
 
-    public void setStoreId(String storeId) {
-        this.storeId = storeId;
-    }
-
-    public void setVehicleStock(VehicleStock vehicleStock) {
-        this.vehicleStock = vehicleStock;
-    }
-
-    public void addNewVehicle(VehicleTypes type, Vehicle vehicle) {
-        vehicleStock.addVehicle(type, vehicle);
-    }
-
-    public void removeVehicle(VehicleTypes type, Vehicle vehicle) {
-        vehicleStock.removeVehicle(type, vehicle);
-    }
-
-    public List<Vehicle> getVehicleByType(VehicleTypes type) {
-        return vehicleStock.getVehiclesByType(type);
-    }
-
-    public List<Vehicle> getVehicleByTypeSorted(VehicleTypes type, String sortBy) {
-        List<Vehicle> vehicles = getVehicleByType(type);
-
-        Comparator<Vehicle> comparator = switch (sortBy.toLowerCase()) {
-            case "price" -> Comparator.comparing(Vehicle::getPrice);
-            case "color" -> Comparator.comparing(Vehicle::getColor);
-            case "manufacturingyear" -> Comparator.comparing(Vehicle::getManufacturingYear);
-            case "carcompany" -> Comparator.comparing(Vehicle::getCarCompany);
-            default -> throw new IllegalArgumentException("Invalid sort key: " + sortBy);
-        };
-
-        return vehicles.stream()
-                .sorted(comparator)
-                .collect(Collectors.toList());
+    @Override
+    public String toString() {
+        return "Store[" + storeId + ", " + location + ", vehicles=" + vehicles.size() + "]";
     }
 }

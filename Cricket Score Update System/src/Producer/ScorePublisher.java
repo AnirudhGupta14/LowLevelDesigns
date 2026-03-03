@@ -72,14 +72,14 @@ public class ScorePublisher implements Runnable {
             }
 
             // Advance legal ball counter
-            if (type.isLegalDelivery()) {
-                legalBalls++;
-                ballInOver++;
-                if (ballInOver == 6) {
-                    ballInOver = 0;
-                    overNumber++;
-                }
-            }
+//            if (type.isLegalDelivery()) {
+//                legalBalls++;
+//                ballInOver++;
+//                if (ballInOver == 6) {
+//                    ballInOver = 0;
+//                    overNumber++;
+//                }
+//            }
         }
 
         running = false;
