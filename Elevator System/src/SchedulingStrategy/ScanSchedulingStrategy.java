@@ -1,75 +1,64 @@
 package SchedulingStrategy;
 
 import Constants.Direction;
+import Constants.ElevatorState;
+import Entities.ElevatorRequest;
 import Services.Elevator;
-import Services.ElevatorRequest;
 
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.List;
 
+/**
+ * SCAN (Elevator/Disk-Scan) Scheduling Strategy.
+ *
+ * Prefers an elevator that is already moving toward the request floor in the
+ * same direction.
+ * Falls back to the nearest idle elevator. This is the classic "look" algorithm
+ * used in real
+ * elevator systems to minimize unnecessary direction changes.
+ */
 public class ScanSchedulingStrategy implements SchedulingStrategy {
 
     @Override
-    public int getNextStop(Elevator elevator) {
+    public Elevator selectElevator(List<Elevator> elevators, ElevatorRequest request) {
+        Elevator best = null;
+        int bestScore = Integer.MAX_VALUE;
 
-        Direction elevatorDirection = elevator.getDirection();
-        int currentFloor = elevator.getCurrentFloor();
-        Queue<ElevatorRequest> requests = elevator.getRequests();
+        for (Elevator elevator : elevators) {
+            if (elevator.getState() == ElevatorState.MAINTENANCE)
+                continue;
 
-        if (requests.isEmpty())
-            return currentFloor;
-
-        PriorityQueue<ElevatorRequest> upQueue = new PriorityQueue<>();
-        PriorityQueue<ElevatorRequest> downQueue = new PriorityQueue<>((a, b) -> Integer.compare(b.getFloor(), a.getFloor()));
-
-        while (!requests.isEmpty()) {
-            ElevatorRequest elevatorRequest = requests.poll();
-            int floor = elevatorRequest.getFloor();
-            if (floor > currentFloor)
-                upQueue.add(elevatorRequest);
-            else
-                downQueue.add(elevatorRequest);
-        }
-
-        if (elevatorDirection == Direction.IDLE) {
-            int nearestUpwardRequest =
-                    upQueue.isEmpty() ? -1 : upQueue.peek().getFloor();
-            int nearestDownwardRequest =
-                    downQueue.isEmpty() ? -1 : downQueue.peek().getFloor();
-
-
-            if (nearestUpwardRequest == -1) {
-                elevator.setDirection(Direction.DOWN);
-                return downQueue.poll().getFloor();
-            } else if (nearestDownwardRequest == -1) {
-                elevator.setDirection(Direction.UP);
-                return upQueue.poll().getFloor();
-            } else {
-                if (Math.abs(nearestUpwardRequest - currentFloor)
-                        < Math.abs(nearestDownwardRequest - currentFloor)) {
-                    elevator.setDirection(Direction.UP);
-                    return upQueue.poll().getFloor();
-                } else {
-                    elevator.setDirection(Direction.DOWN);
-                    return downQueue.poll().getFloor();
-                }
+            int score = computeScore(elevator, request);
+            if (score < bestScore) {
+                bestScore = score;
+                best = elevator;
             }
         }
-
-        if (elevatorDirection == Direction.UP) {
-            return !upQueue.isEmpty() ? upQueue.poll().getFloor() : switchDirection(elevator, downQueue);
-        }
-        else {
-            return !downQueue.isEmpty() ? downQueue.poll().getFloor() : switchDirection(elevator, upQueue);
-        }
+        return best;
     }
 
-    private int switchDirection(Elevator elevator, PriorityQueue<ElevatorRequest> requestsQueue) {
-        elevator.setDirection(elevator.getDirection() == Direction.UP
-                ? Direction.DOWN
-                : Direction.UP);
-        return requestsQueue.isEmpty() ? elevator.getCurrentFloor()
-                : requestsQueue.poll().getFloor();
+    /**
+     * Lower score = better candidate.
+     * - Same direction moving toward request: distance (best)
+     * - Idle: distance + small penalty
+     * - Moving away or opposite direction: totalFloors penalty (worst)
+     */
+    private int computeScore(Elevator elevator, ElevatorRequest request) {
+        int distance = Math.abs(elevator.getCurrentFloor() - request.getSourceFloor());
+
+        if (elevator.getState() == ElevatorState.IDLE) {
+            return distance + 5;
+        }
+
+        boolean movingUp = elevator.getDirection() == Direction.UP;
+        boolean requestUp = request.getDirection() == Direction.UP;
+        boolean enRoute = movingUp
+                ? elevator.getCurrentFloor() <= request.getSourceFloor()
+                : elevator.getCurrentFloor() >= request.getSourceFloor();
+
+        if (enRoute && movingUp == requestUp) {
+            return distance; // ideal: already heading that way
+        }
+
+        return distance + 50; // penalty for wrong direction
     }
 }
-
