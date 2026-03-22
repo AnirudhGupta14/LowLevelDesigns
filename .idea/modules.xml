@@ -18,6 +18,8 @@
       <module fileurl="file://$PROJECT_DIR$/Snake Game/Snake Game.iml" filepath="$PROJECT_DIR$/Snake Game/Snake Game.iml" />
       <module fileurl="file://$PROJECT_DIR$/Splitwise System/Splitwise System.iml" filepath="$PROJECT_DIR$/Splitwise System/Splitwise System.iml" />
       <module fileurl="file://$PROJECT_DIR$/Tic Tac Toe/Tic Tac Toe.iml" filepath="$PROJECT_DIR$/Tic Tac Toe/Tic Tac Toe.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Ride Sharing System/Ride Sharing System.iml" filepath="$PROJECT_DIR$/Ride Sharing System/Ride Sharing System.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Concurrent HashMap/Concurrent HashMap.iml" filepath="$PROJECT_DIR$/Concurrent HashMap/Concurrent HashMap.iml" />
     </modules>
   </component>
 </project>
