@@ -8,7 +8,8 @@ import enums.VehicleType;
  */
 public class Driver extends User {
     private Vehicle vehicle;
-    private boolean available;
+    private int availableSeats;
+    private VehicleType currentRideType;
     private Location currentLocation;
     private VehicleType vehicleType;
 
@@ -16,7 +17,8 @@ public class Driver extends User {
         super(name, email, phone);
         this.vehicle = vehicle;
         this.vehicleType = vehicle.getVehicleType();
-        this.available = true; // driver starts as available
+        this.availableSeats = vehicle.getCapacity(); // driver starts fully available
+        this.currentRideType = null;
     }
 
     // ── Getters / Setters ────────────────────────────────────────────────────
@@ -29,11 +31,36 @@ public class Driver extends User {
     }
 
     public boolean isAvailable() {
-        return available;
+        return availableSeats == vehicle.getCapacity();
     }
 
     public void setAvailable(boolean available) {
-        this.available = available;
+        if (available) {
+            this.availableSeats = vehicle.getCapacity();
+            this.currentRideType = null;
+        } else {
+            this.availableSeats = 0;
+        }
+    }
+
+    public int getAvailableSeats() {
+        return availableSeats;
+    }
+
+    public void reduceCapacity(int seats) {
+        this.availableSeats -= seats;
+    }
+
+    public void increaseCapacity(int seats) {
+        this.availableSeats += seats;
+    }
+
+    public VehicleType getCurrentRideType() {
+        return currentRideType;
+    }
+
+    public void setCurrentRideType(VehicleType type) {
+        this.currentRideType = type;
     }
 
     public Location getCurrentLocation() {
@@ -50,7 +77,7 @@ public class Driver extends User {
 
     @Override
     public String toString() {
-        return String.format("Driver[name=%s, vehicle=%s, available=%b, rating=%.2f]",
-                getName(), vehicle, available, getRating());
+        return String.format("Driver[name=%s, vehicle=%s, availableSeats=%d, rating=%.2f]",
+                getName(), vehicle, availableSeats, getRating());
     }
 }

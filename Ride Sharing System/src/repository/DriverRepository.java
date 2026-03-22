@@ -33,6 +33,19 @@ public class DriverRepository {
                 .collect(Collectors.toList());
     }
 
+    public List<Driver> findEligibleDrivers(enums.VehicleType requestedType) {
+        if (requestedType == enums.VehicleType.SHARED) {
+            return store.values().stream()
+                    .filter(d -> d.getAvailableSeats() > 0 &&
+                            (d.getCurrentRideType() == enums.VehicleType.SHARED || d.isAvailable()))
+                    .filter(d -> d.getVehicleType() == enums.VehicleType.SEDAN
+                            || d.getVehicleType() == enums.VehicleType.SUV)
+                    .collect(Collectors.toList());
+        } else {
+            return findAvailableDrivers();
+        }
+    }
+
     public boolean exists(String id) {
         return store.containsKey(id);
     }

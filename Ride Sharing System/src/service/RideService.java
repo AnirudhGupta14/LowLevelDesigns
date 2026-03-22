@@ -71,8 +71,12 @@ public class RideService {
             return null;
         }
 
-        List<Driver> availableDrivers = driverRepository.findAvailableDrivers();
-        Driver matchedDriver = matchingStrategy.matchDriver(pickup, availableDrivers, vehicleType);
+        List<Driver> eligibleDrivers = driverRepository.findEligibleDrivers(vehicleType);
+        DriverMatchingStrategy activeStrategy = this.matchingStrategy;
+        if (vehicleType == VehicleType.SHARED) {
+            activeStrategy = new strategy.SharedDriverStrategy();
+        }
+        Driver matchedDriver = activeStrategy.matchDriver(pickup, eligibleDrivers, vehicleType);
 
         if (matchedDriver == null) {
             System.out.println("[RideService] No available driver found for: " + vehicleType);
@@ -99,7 +103,14 @@ public class RideService {
         rideRepository.save(ride);
 
         // Mark entities as busy
-        matchedDriver.setAvailable(false);
+        matchedDriver.reduceCapacity(1);
+        if (vehicleType == VehicleType.SHARED) {
+            matchedDriver.setCurrentRideType(VehicleType.SHARED);
+        } else {
+            // For non-shared rides, taking 1 seat makes them completely unavailable,
+            // but we use setAvailable(false) to be explicit.
+            matchedDriver.setAvailable(false);
+        }
         rider.setActiveRide(true);
 
         System.out.printf("[RideService] Ride[%s] created | Driver: %s | Fare: ₹%.2f%n",
@@ -128,7 +139,13 @@ public class RideService {
         ride.updateStatus(RideStatus.COMPLETED);
 
         // Release driver and rider
-        ride.getDriver().setAvailable(true);
+        Driver d = ride.getDriver();
+        if (d != null) {
+            d.increaseCapacity(1);
+            if (d.getAvailableSeats() == d.getVehicle().getCapacity()) {
+                d.setAvailable(true); // Resets state completely
+            }
+        }
         ride.getRider().setActiveRide(false);
 
         System.out.printf("[RideService] Ride[%s] completed. Fare: ₹%.2f%n",
@@ -142,7 +159,11 @@ public class RideService {
         }
 
         if (ride.getDriver() != null) {
-            ride.getDriver().setAvailable(true);
+            Driver d = ride.getDriver();
+            d.increaseCapacity(1);
+            if (d.getAvailableSeats() == d.getVehicle().getCapacity()) {
+                d.setAvailable(true);
+            }
         }
         ride.getRider().setActiveRide(false);
         ride.updateStatus(RideStatus.CANCELLED);
