@@ -20,6 +20,8 @@
       <module fileurl="file://$PROJECT_DIR$/Tic Tac Toe/Tic Tac Toe.iml" filepath="$PROJECT_DIR$/Tic Tac Toe/Tic Tac Toe.iml" />
       <module fileurl="file://$PROJECT_DIR$/Ride Sharing System/Ride Sharing System.iml" filepath="$PROJECT_DIR$/Ride Sharing System/Ride Sharing System.iml" />
       <module fileurl="file://$PROJECT_DIR$/Concurrent HashMap/Concurrent HashMap.iml" filepath="$PROJECT_DIR$/Concurrent HashMap/Concurrent HashMap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Rate Limiter System/Rate Limiter System.iml" filepath="$PROJECT_DIR$/Rate Limiter System/Rate Limiter System.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Amazon Locker System/Amazon Locker System.iml" filepath="$PROJECT_DIR$/Amazon Locker System/Amazon Locker System.iml" />
     </modules>
   </component>
 </project>
